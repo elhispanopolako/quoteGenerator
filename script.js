@@ -19,7 +19,28 @@ function removeLoadingSpinner() {
 
 function newQuote() {
     showLoadingSpinner()
-    const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)]
+    try {
+        const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)]
+        if (!quote.author) {
+            authorText.textContent = 'Unknown'
+        } else {
+            authorText.textContent = quote.author
+        }
+        if (quote.text.length > 120) {
+            quoteText.classList.add('long-quote')
+        } else {
+            quoteText.classList.remove('long-quote')
+        }
+        quoteText.textContent = quote.text
+    } catch (error) {
+        newQuoteLocal()
+    }
+
+    setTimeout(removeLoadingSpinner, 1000)
+}
+function newQuoteLocal() {
+    showLoadingSpinner()
+    const quote = localQuotes[Math.floor(Math.random() * localQuotes.length)]
     if (!quote.author) {
         authorText.textContent = 'Unknown'
     } else {
@@ -33,12 +54,6 @@ function newQuote() {
     quoteText.textContent = quote.text
     setTimeout(removeLoadingSpinner, 1000)
 }
-function newQuoteLocal() {
-    showLoadingSpinner()
-    const quote = localQuotes[Math.floor(Math.random() * apiQuotes.length)]
-    console.log(quote)
-    removeLoadingSpinner()
-}
 // Get quotes from API
 async function getQuotes() {
     showLoadingSpinner()
@@ -49,7 +64,7 @@ async function getQuotes() {
         newQuote()
         setTimeout(removeLoadingSpinner, 3000)
     } catch (error) {
-
+        newQuoteLocal()
     }
 }
 // Tweet 
